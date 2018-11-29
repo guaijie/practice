@@ -9,11 +9,93 @@
 </head>
 
 <body>
-  
+  <div>打开控制台查看</div>
 </body>
 <script>
-  
-  
+
+
+  class WebWorker{
+    /**
+     * @description: webworker的简单封装
+     * @Author   guaijie
+     * @DateTime 2018-11-29
+     * @param    {String}   data js的url/script
+     * @param    {String}   type 指定data的类型
+     * @return   {WebWorker 对象} 
+     */
+    constructor(data,type='url'){
+      this.worker=null;
+      this.init(data,type);
+    }  
+    /*初始化worker线程*/
+    init(data,type){
+
+      if(type=='url'){
+        this.worker=new Worker(data);
+
+      }else{
+        // 以字符串形式创建worker线程，把代码字符串，转成二进制对象，生成 URL，加载URL
+        const blob = new Blob([data]);//BLOB (binary large object)，二进制大对象，是一个可以存储二进制文件的容器。
+        const url = window.URL.createObjectURL(blob);
+        this.worker = new Worker(url); // 加载
+      } 
+    }
+
+    /**
+     * 主线程监听来自worker线程的消息         
+     * @param    {Function} fn 回调函数
+     * @return   {*}      fn的返回值
+     */
+    getMessage(fn){
+      this.worker.onmessage=e=>{
+        return fn(e.data)
+      }
+    }
+
+    /**
+     * 主线发送信息给worker线程
+     * @param    {*}   data 发送的数据
+     * @return   {undefined}    
+     */
+    postMessage(data){
+      this.worker.postMessage(data);
+    }
+
+    /**
+     * 主线程监听来自worker线程的错误消息         
+     * @param    {Function} fn 回调函数
+     * @return   {*}      fn的返回值
+     */
+    getError(fn){
+      this.worker.onmessage=e=>{
+        return fn(e.data)
+      }
+    }
+
+    /**
+     * 主线程监听来自worker线程的消息(MessageEvent类型:messageerror)        
+     * @param    {Function} fn 回调函数
+     * @return   {*}      fn的返回值
+     */
+    getMessageError(fn){
+      this.worker.onmessageerroe=e=>{
+        return fn(e.data)
+      }
+    }
+
+    // 主线程关闭worker线程
+    closeWorker(){
+      return this.worker.terminate();
+    }
+  }
+
+
+  var webWorker=new WebWorker('./webWorker.js');
+  webWorker.postMessage("主进程传给worker线程");
+  webWorker.getMessage((data)=>{
+    console.log(data)
+  })
+  console.log(webWorker);
 
 </script>
 </html>
