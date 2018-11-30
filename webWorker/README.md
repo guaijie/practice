@@ -81,12 +81,15 @@
 **一旦数据转移到其他线程，原先线程就无法再使用这些二进制数据了，**这是为了防止出现多个线程同时修改数据的麻烦局面
 
   (```)
+
     // 创建二进制数据
     var uInt8Array = new Uint8Array(1024*1024*32); // 32MB
     for (var i = 0; i < uInt8Array .length; ++i) {
       uInt8Array[i] = i;
     }
+
     console.log(uInt8Array.length); // 传递前长度:33554432
+
     // 字符串形式创建worker线程
     var myTask = `
       onmessage = function (e) {
@@ -96,6 +99,7 @@
     `;
 
     var blob = new Blob([myTask]);
+    
     var myWorker = new Worker(window.URL.createObjectURL(blob));
 
     // 使用这个格式(a,[a]) 来转移二进制数据
