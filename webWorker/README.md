@@ -14,18 +14,22 @@
 ##  监听主线程传过来的信息
 
 (```)
+
   self.onmessage = e => {
     console.log('主线程传来的信息：', e.data);
     // do something
   };
+  
 (```)
 
 ##  发送信息给主线程
 
 (```)
+
   self.postMessage({
     hello: [ '这条信息', '来自worker线程' ]
   });
+  
 (```)
 
 ##  worker 线程关闭自身
