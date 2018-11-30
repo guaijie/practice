@@ -11,6 +11,7 @@
 <body>
   <div>打开控制台查看</div>
 </body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script>
 
 
@@ -83,15 +84,26 @@
       }
     }
 
+    on(eventName,fn){
+      this.worker.addEventListener(eventName,fn);
+    }
+
+    emit(eventName){
+      this.worker.dispatchEvent(eventName);
+    }
+
     // 主线程关闭worker线程
     closeWorker(){
       return this.worker.terminate();
     }
+
   }
 
 
   var webWorker=new WebWorker('./webWorker.js');
   webWorker.postMessage("主进程传给worker线程");
+  // webWorker.postMessage([$]);
+  // webWorker.postMessage();
   webWorker.getMessage((data)=>{
     console.log(data)
   })
