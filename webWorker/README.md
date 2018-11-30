@@ -14,18 +14,18 @@
 ##  监听主线程传过来的信息
 
   (```)
-  self.onmessage = e => {
-    console.log('主线程传来的信息：', e.data);
-    // do something
-  };
+    self.onmessage = e => {
+      console.log('主线程传来的信息：', e.data);
+      // do something
+    };
   (```)
 
 ##  发送信息给主线程
 
   (```)
-  self.postMessage({
-    hello: [ '这条信息', '来自worker线程' ]
-  });
+    self.postMessage({
+      hello: [ '这条信息', '来自worker线程' ]
+    });
   (```)
 
 ##  worker 线程关闭自身
@@ -81,25 +81,37 @@
 **一旦数据转移到其他线程，原先线程就无法再使用这些二进制数据了，**这是为了防止出现多个线程同时修改数据的麻烦局面
 
   (```)
-  // 创建二进制数据
-  var uInt8Array = new Uint8Array(1024*1024*32); // 32MB
-  for (var i = 0; i < uInt8Array .length; ++i) {
-    uInt8Array[i] = i;
-  }
-  console.log(uInt8Array.length); // 传递前长度:33554432
-  // 字符串形式创建worker线程
-  var myTask = `
-    onmessage = function (e) {
-        var data = e.data;
-        console.log('worker:', data);
-    };
-  `;
+    // 创建二进制数据
+    var uInt8Array = new Uint8Array(1024*1024*32); // 32MB
+    for (var i = 0; i < uInt8Array .length; ++i) {
+      uInt8Array[i] = i;
+    }
+    console.log(uInt8Array.length); // 传递前长度:33554432
+    // 字符串形式创建worker线程
+    var myTask = `
+      onmessage = function (e) {
+          var data = e.data;
+          console.log('worker:', data);
+      };
+    `;
 
-  var blob = new Blob([myTask]);
-  var myWorker = new Worker(window.URL.createObjectURL(blob));
+    var blob = new Blob([myTask]);
+    var myWorker = new Worker(window.URL.createObjectURL(blob));
 
-  // 使用这个格式(a,[a]) 来转移二进制数据
-  myWorker.postMessage(uInt8Array.buffer, [uInt8Array.buffer]); // 发送数据、转移数据
+    // 使用这个格式(a,[a]) 来转移二进制数据
+    myWorker.postMessage(uInt8Array.buffer, [uInt8Array.buffer]); // 发送数据、转移数据
 
-  console.log(uInt8Array.length); // 传递后长度:0，原先线程内没有这个数据了
-(```)
+    console.log(uInt8Array.length); // 传递后长度:0，原先线程内没有这个数据了
+  (```)
+
+##  应用场景
+
+1.  数学运算
+
+2.  图像、影音等文件处理
+
+3.  大量数据检索
+
+4.  比如用户输入时，我们在后台检索答案，或者帮助用户联想，纠错等操作
+
+5.  耗时任务都丢到 webworker 解放我们的主线程
