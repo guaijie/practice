@@ -102,12 +102,9 @@
 
   var webWorker=new WebWorker('./webWorker.js');
   webWorker.postMessage("主进程传给worker线程");
-  // webWorker.postMessage([$]);
-  // webWorker.postMessage();
   webWorker.getMessage((data)=>{
     console.log(data)
   })
-  console.log(webWorker);
 
 </script>
 </html>
