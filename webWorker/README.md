@@ -30,7 +30,7 @@
 
 ##  worker 线程关闭自身
 
-  `self.close();`
+`self.close();`
 
 ##  worker 线程加载脚本：
 
