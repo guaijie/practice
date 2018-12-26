@@ -1,0 +1,6 @@
+﻿### 忽略根目录(/)下的node_modules目录(node_modules)以及其所有子目录(/) ###
+/node_modules/
+
+package-lock.json
+
+
